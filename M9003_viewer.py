@@ -20,11 +20,11 @@ import pyqtgraph as pg
 
 import ctypes
 
-"""Load M9003 API from dll"""
+"""Load M9003 API from dll
 dll = ctypes.windll.LoadLibrary('./M9003api.dll')
 hM9003 = dll.M9003Open()
 dll.M9003Reset(hM9003)
-
+"""
 
 
 # Ensure using PyQt5 backend
