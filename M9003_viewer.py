@@ -38,7 +38,7 @@ class MainWindow(QMainWindow, qt_ui.Ui_MainWindow):
         self.ui = qt_ui.Ui_MainWindow()
         self.ui.setupUi(self)
 
-        # self.menu_quit.addAction('&Quit', self.fileQuit, QtCore.Qt.CTRL + QtCore.Qt.Key_Q)
+        #self.menu_quit.addAction('&Quit', self.fileQuit, QtCore.Qt.CTRL + QtCore.Qt.Key_Q)
 
         # set time
         self.ui.m_time.setReadOnly(True)
@@ -54,30 +54,49 @@ class MainWindow(QMainWindow, qt_ui.Ui_MainWindow):
 
         photon_hist_ch1 = []
         photon_hist_ch2 = []
+        ## measure photon before button cle
         photon_ch1, photon_hist_ch1 = self.measurePhoton(photon_hist_ch1)
         photon_ch2, photon_hist_ch2 = self.measurePhoton(photon_hist_ch2)
 
+        # Graph01 : photon count of Ch1
         self.graph01 = pg.PlotWidget(self.ui.centralwidget)
         self.graph01.setObjectName("graph01")
         self.ui.countCh1.addWidget(self.graph01)
-        self.plotCount_Ch1(photon_ch1)
+        self.graph01.setLabel('left', "Photon Count", units='photon')
+        self.graph01.setLabel('bottom', "Time", )
+        self.graph01.setLabel('top', "Temporal Photon Count (Ch01)")
+        self.graph01.setLabel('left', "Photon Count", units='photon')
+        #self.plotCount_Ch1(photon_ch1) # Is this needed for t=0
 
+        # Graph02 : photon sum history of Ch1
         self.graph02 = pg.PlotWidget(self.ui.centralwidget)
         self.graph02.setObjectName("graph02")
         self.ui.sumCh1.addWidget(self.graph02)
-        self.plotHist_Ch1(photon_hist_ch1)
+        self.graph02.setLabel('left', "Photon Count", units='photon')
+        self.graph02.setLabel('bottom', "Time", )
+        self.graph02.setLabel('top', "Temporal Photon Count (Ch01)")
+        #self.plotHist_Ch1(photon_hist_ch1)
 
+        # Graph03 : photon count of Ch2
         self.graph03 = pg.PlotWidget(self.ui.centralwidget)
         self.graph03.setObjectName("graph03")
         self.ui.countCh2.addWidget(self.graph03)
-        self.plotCount_Ch2(photon_ch2)
+        self.graph03.setLabel('left', "Photon Count", units='photon')
+        self.graph03.setLabel('bottom', "Time",)
+        self.graph03.setLabel('top', "Temporal Photon Count (Ch02)")
+        self.graph03.setLabel('left', "Photon Count", units='photon')
+        #self.plotCount_Ch2(photon_ch2)
 
+        # Graph02 : photon sum history of Ch2
         self.graph04 = pg.PlotWidget(self.ui.centralwidget)
         self.graph04.setObjectName("graph04")
         self.ui.sumCh2.addWidget(self.graph04)
-        self.plotHist_Ch2(photon_hist_ch2)
+        self.graph04.setLabel('left', "Photon Count", units='photon')
+        self.graph04.setLabel('bottom', "Time", )
+        self.graph04.setLabel('top', "Temporal Photon Count (Ch02)")
+        #self.plotHist_Ch2(photon_hist_ch2)
 
-        self.ui.btn_measure.clicked.connect(self.buttonClicked())
+        self.ui.btn_measure.clicked.connect(lambda: self.measurebtnClicked(photon_hist_ch1, photon_hist_ch2))
 
         #self.ui.loop_start.clicked.connect(self.plot())
         #self.verticalLayout.addWidget(self.graph01)
@@ -93,42 +112,19 @@ class MainWindow(QMainWindow, qt_ui.Ui_MainWindow):
 
     def plotCount_Ch1(self, photon):
         self.graph01.plot(photon)
-        self.graph01.setLabel('left', "Photon Count", units='photon')
-        self.graph01.setLabel('bottom', "Time",)
-        self.graph01.setLabel('top', "Temporal Photon Count (Ch01)")
-        self.graph01.setLabel('left', "Photon Count", units='photon')
 
     def plotCount_Ch2(self, photon):
         self.graph03.plot(photon)
-        self.graph03.setLabel('left', "Photon Count", units='photon')
-        self.graph03.setLabel('bottom', "Time",)
-        self.graph03.setLabel('top', "Temporal Photon Count (Ch02)")
-        self.graph03.setLabel('left', "Photon Count", units='photon')
 
     def plotHist_Ch1(self, photon_hist):
-        for i in range(10):
-            tmp = np.random.randint(0, 30, 100)
-            tmp_sum = sum(tmp)
-            photon_hist.append(tmp_sum)
         if len(photon_hist) > 10:
             photon_hist.pop(0)
         self.graph02.plot(photon_hist)
-        self.graph02.setLabel('left', "Photon Count", units='photon')
-        self.graph02.setLabel('bottom', "Time", )
-        self.graph02.setLabel('top', "Temporal Photon Count (Ch01)")
 
     def plotHist_Ch2(self, photon_hist):
-        for i in range(10):
-            tmp = np.random.randint(0, 30, 100)
-            tmp_sum = sum(tmp)
-            photon_hist.append(tmp_sum)
         if len(photon_hist) > 10:
             photon_hist.pop(0)
         self.graph04.plot(photon_hist)
-        self.graph04.setLabel('left', "Photon Count", units='photon')
-        self.graph04.setLabel('bottom', "Time", )
-        self.graph04.setLabel('top', "Temporal Photon Count (Ch01)")
-
 
     def calc_time(self):
         g = int(self.ui.gate_time.text()) * 50
@@ -142,13 +138,11 @@ class MainWindow(QMainWindow, qt_ui.Ui_MainWindow):
     def fileQuit(self):
         self.close()
 
-    def buttonClicked(self, photon_hist_ch1, photon_hist_ch2):
+    def measurebtnClicked(self, photon_hist_ch1, photon_hist_ch2):
         sender = self.sender()
         self.statusBar().showMessage(sender.text() + ' was pressed')
-        #photon_hist_ch1 = []
-        photon_ch1, photon_hist_ch1 = self.measurePhoton(photon_hist_ch1)
 
-        #photon_hist_ch2 = []
+        photon_ch1, photon_hist_ch1 = self.measurePhoton(photon_hist_ch1)
         photon_ch2, photon_hist_ch2 = self.measurePhoton(photon_hist_ch2)
 
         self.graph01.clear()
@@ -160,8 +154,6 @@ class MainWindow(QMainWindow, qt_ui.Ui_MainWindow):
         self.plotCount_Ch2(photon_ch2)
         self.graph04.clear()
         self.plotHist_Ch2(photon_hist_ch2)
-
-        self.ui.btn_measure.clicked.connect(self.buttonClicked)
 
 
 pg.setConfigOption('foreground', 'k')
