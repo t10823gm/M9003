@@ -6,7 +6,7 @@ Created on Thu Jan 11 11:47:48 2018
 """
 
 from ctypes import *
-
+import numpy as np
 ''' load DLL '''
 dll = windll.LoadLibrary('./M9003api.dll')
 
@@ -27,16 +27,24 @@ g_time = 40
 dll.M9003Setup.restype = c_bool
 dll.M9003Setup.argtypes = [wintypes.HANDLE, wintypes.BYTE, wintypes.BYTE,
                            wintypes.BYTE, wintypes.BYTE, wintypes.BYTE, wintypes.BYTE]
-b_setting = dll.M9003Setup(hM9003, 0x08, 0x03, 0x00, g_time, 0, 0x01)
+'''
+BOOL M9003Setup( HANDLE hM9003,
+                 BYTE CountMode,
+                 BYTE ChannelEnable,
+                 BYTE TriggerMode,
+                 BYTE GateTime,
+                 BYTE NumberOfGate,
+                 BYTE GateDelimiter )
+'''
+b_setting = dll.M9003Setup(hM9003, 0x08, 0x01, 0x00, g_time, 0, 0x01)
 print('Setting: ', b_setting)
 
 ''' read Data
         photon countint data is obtained with this function. '''
 dll.M9003ReadData.restype = c_bool
-# import numpy as np
 dataBuffer = (wintypes.DWORD*1670000*2)()
 # dataLnegth value should be assigned via GUI
-dataLength = byref(wintypes.DWORD(200000))
+dataLength = byref(wintypes.DWORD(1000))
 rd = dll.M9003ReadData(hM9003, dataBuffer, dataLength)
 print('ReadData: ', rd)
 
@@ -64,3 +72,4 @@ print(cl)
 convData = cast(dataBuffer, POINTER(c_int))
 countData = [convData[i] for i in range(1670000)]
 # numpy array is better than list in terms of calculation speed.
+coutData2 = np.ctypeslib.as_array(dataBuffer)
