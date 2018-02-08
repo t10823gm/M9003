@@ -28,15 +28,13 @@ dll.M9003Reset(hM9003)
 
 
 # Ensure using PyQt5 backend
-# matplotlib.use('QT5Agg')
-
-# Matplotlib widget
 
 class MainWindow(QMainWindow, qt_ui.Ui_MainWindow):
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent=parent)
         self.ui = qt_ui.Ui_MainWindow()
         self.ui.setupUi(self)
+        self.timer = QtCore.QTimer()
 
         #self.menu_quit.addAction('&Quit', self.fileQuit, QtCore.Qt.CTRL + QtCore.Qt.Key_Q)
 
@@ -50,13 +48,9 @@ class MainWindow(QMainWindow, qt_ui.Ui_MainWindow):
         self.ui.logo.setPixmap(pixmap)
         self.ui.logo.setScaledContents(True)
 
-        # set fig
-
+        # set photon_hist list
         photon_hist_ch1 = []
         photon_hist_ch2 = []
-        ## measure photon before button cle
-        photon_ch1, photon_hist_ch1 = self.measurePhoton(photon_hist_ch1)
-        photon_ch2, photon_hist_ch2 = self.measurePhoton(photon_hist_ch2)
 
         # Graph01 : photon count of Ch1
         self.graph01 = pg.PlotWidget(self.ui.centralwidget)
@@ -66,16 +60,14 @@ class MainWindow(QMainWindow, qt_ui.Ui_MainWindow):
         self.graph01.setLabel('bottom', "Time", )
         self.graph01.setLabel('top', "Temporal Photon Count (Ch01)")
         self.graph01.setLabel('left', "Photon Count", units='photon')
-        #self.plotCount_Ch1(photon_ch1) # Is this needed for t=0
 
         # Graph02 : photon sum history of Ch1
         self.graph02 = pg.PlotWidget(self.ui.centralwidget)
         self.graph02.setObjectName("graph02")
         self.ui.sumCh1.addWidget(self.graph02)
-        self.graph02.setLabel('left', "Photon Count", units='photon')
-        self.graph02.setLabel('bottom', "Time", )
+        self.graph02.setLabel('left', "Total Photon Count", units='photon')
+        #self.graph02.setLabel('bottom', "Time", )
         self.graph02.setLabel('top', "Temporal Photon Count (Ch01)")
-        #self.plotHist_Ch1(photon_hist_ch1)
 
         # Graph03 : photon count of Ch2
         self.graph03 = pg.PlotWidget(self.ui.centralwidget)
@@ -85,21 +77,23 @@ class MainWindow(QMainWindow, qt_ui.Ui_MainWindow):
         self.graph03.setLabel('bottom', "Time",)
         self.graph03.setLabel('top', "Temporal Photon Count (Ch02)")
         self.graph03.setLabel('left', "Photon Count", units='photon')
-        #self.plotCount_Ch2(photon_ch2)
 
         # Graph02 : photon sum history of Ch2
         self.graph04 = pg.PlotWidget(self.ui.centralwidget)
         self.graph04.setObjectName("graph04")
         self.ui.sumCh2.addWidget(self.graph04)
-        self.graph04.setLabel('left', "Photon Count", units='photon')
-        self.graph04.setLabel('bottom', "Time", )
+        self.graph04.setLabel('left', "Total Photon Count", units='photon')
+        #self.graph04.setLabel('bottom', "Time", )
         self.graph04.setLabel('top', "Temporal Photon Count (Ch02)")
-        #self.plotHist_Ch2(photon_hist_ch2)
 
+
+        ''' single measurement '''
         self.ui.btn_measure.clicked.connect(lambda: self.measurebtnClicked(photon_hist_ch1, photon_hist_ch2))
 
-        #self.ui.loop_start.clicked.connect(self.plot())
-        #self.verticalLayout.addWidget(self.graph01)
+        ''' loop measurement '''
+        self.ui.btn_loopStart.clicked.connect(lambda: self.loop_measurment(photon_hist_ch1, photon_hist_ch2))
+        self.ui.btn_loopStop.clicked.connect(self.loop_stop)
+
 
     def measurePhoton(self, photon_hist):
         """run M9003api_ReadData
@@ -134,13 +128,29 @@ class MainWindow(QMainWindow, qt_ui.Ui_MainWindow):
     def doSomething(self):
         print("I'm doing something")
 
+    def loop_measurment(self, photon_hist_ch1, photon_hist_ch2):
+        self.timer.timeout.connect(lambda: self.measurebtnClicked(photon_hist_ch1, photon_hist_ch2))
+        interval = (int(self.ui.gate_time.text()) * 50) * int(self.ui.read_data.text()) / pow(10, 6)
+        print(interval)
+        self.timer.start(interval + 100)
+
+    def loop_stop(self):
+        print('loop stop!')
+        self.timer.stop()
+
+    def playScansPressed(self):
+        if self.playScansAction.isChecked():
+            self.playTimer.start()
+        else:
+            self.playTimer.stop()
 
     def fileQuit(self):
         self.close()
 
     def measurebtnClicked(self, photon_hist_ch1, photon_hist_ch2):
-        sender = self.sender()
-        self.statusBar().showMessage(sender.text() + ' was pressed')
+        #print(type(photon_hist_ch1))
+        #sender = self.sender()
+        #self.statusBar().showMessage(sender.text() + ' was pressed')
 
         photon_ch1, photon_hist_ch1 = self.measurePhoton(photon_hist_ch1)
         photon_ch2, photon_hist_ch2 = self.measurePhoton(photon_hist_ch2)
