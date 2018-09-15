@@ -7,6 +7,8 @@ Created on Thu Jan 11 11:47:48 2018
 
 from ctypes import *
 import numpy as np
+import struct
+
 ''' load DLL '''
 dll = windll.LoadLibrary('./M9003api.dll')
 
@@ -35,17 +37,41 @@ BOOL M9003Setup( HANDLE hM9003,
                  BYTE GateTime,
                  BYTE NumberOfGate,
                  BYTE GateDelimiter )
+Params: 
+#define M9003_RECIPROCAL        0x0C
+#define M9003_GATE_BYTE_DATA    0x08
+#define M9003_GATE_WORD_DATA    0x09
+#define M9003_CH0_ENABLE        0x01
+#define M9003_CH1_ENABLE        0x02
+#define M9003_CH0_CH1_ENABLE    0x03
+#define M9003_EXT_TRIGGER       0x0F
+#define M9003_INT_TRIGGER       0x00
+#define M9003_DELIMITER_NONE    0x00
+#define M9003_DELIMITER_INSERT  0x01
+
+#define M9003_GATE_ALL          0
 '''
-b_setting = dll.M9003Setup(hM9003, 0x08, 0x01, 0x00, g_time, 0, 0x01)
+b_setting = dll.M9003Setup(hM9003, 0x08, 0x01, 0x00, g_time, 0, 0x00)
 print('Setting: ', b_setting)
 
 ''' read Data
         photon countint data is obtained with this function. '''
 dll.M9003ReadData.restype = c_bool
-dataBuffer = (wintypes.DWORD*1670000*2)()
+#dll.M9003ReadData.argtypes = [wintypes.HANDLE, c_void_p, POINTER(wintypes.DWORD)]
+
+#dataBuffer = (c_int*1670)()
+dataBuffer = (wintypes.DWORD*6680)()
+
+"""
+class dBuf(Structure):
+    __fields__ = [('dataBuffer', pointer(wintypes.DWORD))]
+    """
+
 # dataLnegth value should be assigned via GUI
-dataLength = byref(wintypes.DWORD(1000))
+dataLength = byref(wintypes.DWORD(1670))
+#dataLength = byref(c_int(1670))
 rd = dll.M9003ReadData(hM9003, dataBuffer, dataLength)
+#rd = dll.M9003ReadData(hM9003, dataBuffer, dataLength)
 print('ReadData: ', rd)
 
 ''' Count Stop
@@ -68,8 +94,16 @@ dll.M9003Close.restype = c_bool
 cl = dll.M9003Close(hM9003)
 print(cl)
 
+''' endian '''
+import sys
+print(sys.byteorder)
+
 ''' convert data type of dataBuffer '''
-convData = cast(dataBuffer, POINTER(c_int))
-countData = [convData[i] for i in range(1670000)]
-# numpy array is better than list in terms of calculation speed.
-coutData2 = np.ctypeslib.as_array(dataBuffer)
+convData = cast(dataBuffer, POINTER(wintypes.DWORD))
+#convData = cast(dataBuffer, POINTER(c_int))
+y = []
+for i in range(1670):
+    x = struct.pack('L', convData[i])
+    y.append(struct.unpack('<BBBB', x))
+countData = [convData[i] for i in range(1670)]
+
