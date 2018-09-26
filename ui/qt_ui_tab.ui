@@ -20,9 +20,9 @@
    <widget class="QGroupBox" name="mSettingBox">
     <property name="geometry">
      <rect>
-      <x>210</x>
+      <x>110</x>
       <y>20</y>
-      <width>701</width>
+      <width>801</width>
       <height>91</height>
      </rect>
     </property>
@@ -32,8 +32,8 @@
     <widget class="QLabel" name="str_gateTime">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>20</y>
+       <x>210</x>
+       <y>30</y>
        <width>81</width>
        <height>16</height>
       </rect>
@@ -51,8 +51,8 @@
     <widget class="QWidget" name="horizontalLayoutWidget">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>30</y>
+       <x>210</x>
+       <y>40</y>
        <width>151</width>
        <height>41</height>
       </rect>
@@ -77,8 +77,8 @@
     <widget class="QLabel" name="str_readData">
      <property name="geometry">
       <rect>
-       <x>180</x>
-       <y>20</y>
+       <x>400</x>
+       <y>30</y>
        <width>141</width>
        <height>16</height>
       </rect>
@@ -96,8 +96,8 @@
     <widget class="QLabel" name="str_mesTime">
      <property name="geometry">
       <rect>
-       <x>340</x>
-       <y>20</y>
+       <x>610</x>
+       <y>30</y>
        <width>121</width>
        <height>16</height>
       </rect>
@@ -112,37 +112,11 @@
       <string>Measurement Time</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="btn_measure">
-     <property name="geometry">
-      <rect>
-       <x>490</x>
-       <y>40</y>
-       <width>75</width>
-       <height>23</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Measure</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="btn_loopStop">
-     <property name="geometry">
-      <rect>
-       <x>580</x>
-       <y>60</y>
-       <width>101</width>
-       <height>23</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Loop_Stop</string>
-     </property>
-    </widget>
     <widget class="QLineEdit" name="m_time">
      <property name="geometry">
       <rect>
-       <x>340</x>
-       <y>40</y>
+       <x>610</x>
+       <y>50</y>
        <width>101</width>
        <height>20</height>
       </rect>
@@ -154,8 +128,8 @@
     <widget class="QLabel" name="str_gateTime_2">
      <property name="geometry">
       <rect>
-       <x>450</x>
-       <y>40</y>
+       <x>720</x>
+       <y>50</y>
        <width>51</width>
        <height>16</height>
       </rect>
@@ -167,8 +141,8 @@
     <widget class="QLineEdit" name="read_data">
      <property name="geometry">
       <rect>
-       <x>180</x>
-       <y>40</y>
+       <x>400</x>
+       <y>50</y>
        <width>121</width>
        <height>20</height>
       </rect>
@@ -177,18 +151,30 @@
       <string>1000000</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="btn_loopStart">
+    <widget class="QComboBox" name="comboBox">
      <property name="geometry">
       <rect>
-       <x>580</x>
-       <y>20</y>
-       <width>101</width>
-       <height>23</height>
+       <x>30</x>
+       <y>40</y>
+       <width>121</width>
+       <height>32</height>
       </rect>
      </property>
-     <property name="text">
-      <string>Loop_Start</string>
-     </property>
+     <item>
+      <property name="text">
+       <string>Ch. 1 (Green)</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Ch. 2 (Red)</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Ch. 1, Ch, 2</string>
+      </property>
+     </item>
     </widget>
    </widget>
    <widget class="QLabel" name="logo">
@@ -196,7 +182,7 @@
      <rect>
       <x>20</x>
       <y>10</y>
-      <width>171</width>
+      <width>61</width>
       <height>101</height>
      </rect>
     </property>
@@ -207,28 +193,170 @@
    <widget class="QTabWidget" name="tabWidget">
     <property name="geometry">
      <rect>
-      <x>9</x>
+      <x>10</x>
       <y>120</y>
       <width>911</width>
       <height>611</height>
      </rect>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>1</number>
     </property>
-    <widget class="QWidget" name="tab">
+    <widget class="QWidget" name="tab_fcs">
      <attribute name="title">
-      <string>Channel G</string>
+      <string>FCS</string>
      </attribute>
+     <widget class="QWidget" name="verticalLayoutWidget">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>481</width>
+        <height>281</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="photonCount"/>
+     </widget>
+     <widget class="QWidget" name="verticalLayoutWidget_2">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>290</y>
+        <width>481</width>
+        <height>281</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="photonSum"/>
+     </widget>
+     <widget class="QPushButton" name="pushButton">
+      <property name="geometry">
+       <rect>
+        <x>600</x>
+        <y>460</y>
+        <width>141</width>
+        <height>32</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Save data as CSV</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn_measure">
+      <property name="geometry">
+       <rect>
+        <x>510</x>
+        <y>460</y>
+        <width>75</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Measure</string>
+      </property>
+     </widget>
+     <widget class="QWidget" name="verticalLayoutWidget_3">
+      <property name="geometry">
+       <rect>
+        <x>490</x>
+        <y>0</y>
+        <width>411</width>
+        <height>281</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="colFunc">
+       <property name="spacing">
+        <number>-1</number>
+       </property>
+      </layout>
+     </widget>
+     <widget class="QGroupBox" name="mSettingBox_2">
+      <property name="geometry">
+       <rect>
+        <x>500</x>
+        <y>300</y>
+        <width>241</width>
+        <height>71</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>Confocal spot search</string>
+      </property>
+      <widget class="QLabel" name="str_mesTime_2">
+       <property name="geometry">
+        <rect>
+         <x>610</x>
+         <y>30</y>
+         <width>121</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Measurement Time</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="m_time_2">
+       <property name="geometry">
+        <rect>
+         <x>610</x>
+         <y>50</y>
+         <width>101</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>2.5</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="str_gateTime_4">
+       <property name="geometry">
+        <rect>
+         <x>720</x>
+         <y>50</y>
+         <width>51</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>sec.</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="btn_loopStop">
+       <property name="geometry">
+        <rect>
+         <x>130</x>
+         <y>30</y>
+         <width>101</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Loop_Stop</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="btn_loopStart">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>30</y>
+         <width>101</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Loop_Start</string>
+       </property>
+      </widget>
+     </widget>
     </widget>
-    <widget class="QWidget" name="tab_2">
+    <widget class="QWidget" name="tab_fccs">
      <attribute name="title">
-      <string>Channel R</string>
-     </attribute>
-    </widget>
-    <widget class="QWidget" name="tab_3">
-     <attribute name="title">
-      <string>GR</string>
+      <string>FCCS</string>
      </attribute>
     </widget>
    </widget>
