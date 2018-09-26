@@ -200,7 +200,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tab_fcs">
      <attribute name="title">
@@ -228,24 +228,24 @@
       </property>
       <layout class="QVBoxLayout" name="photonSum"/>
      </widget>
-     <widget class="QPushButton" name="pushButton">
+     <widget class="QPushButton" name="FCS_DataBtn">
       <property name="geometry">
        <rect>
         <x>600</x>
-        <y>460</y>
-        <width>141</width>
+        <y>520</y>
+        <width>111</width>
         <height>32</height>
        </rect>
       </property>
       <property name="text">
-       <string>Save data as CSV</string>
+       <string>Save as CSV</string>
       </property>
      </widget>
      <widget class="QPushButton" name="btn_measure">
       <property name="geometry">
        <rect>
         <x>510</x>
-        <y>460</y>
+        <y>520</y>
         <width>75</width>
         <height>31</height>
        </rect>
@@ -263,7 +263,7 @@
         <height>281</height>
        </rect>
       </property>
-      <layout class="QVBoxLayout" name="colFunc">
+      <layout class="QVBoxLayout" name="collelationFunc">
        <property name="spacing">
         <number>-1</number>
        </property>
@@ -275,7 +275,7 @@
         <x>500</x>
         <y>300</y>
         <width>241</width>
-        <height>71</height>
+        <height>61</height>
        </rect>
       </property>
       <property name="title">
@@ -330,7 +330,7 @@
        <property name="geometry">
         <rect>
          <x>130</x>
-         <y>30</y>
+         <y>20</y>
          <width>101</width>
          <height>31</height>
         </rect>
@@ -343,7 +343,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>30</y>
+         <y>20</y>
          <width>101</width>
          <height>31</height>
         </rect>
@@ -353,11 +353,219 @@
        </property>
       </widget>
      </widget>
+     <widget class="QPushButton" name="FCS_saveFigBtn">
+      <property name="geometry">
+       <rect>
+        <x>720</x>
+        <y>520</y>
+        <width>111</width>
+        <height>32</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Save as EPS</string>
+      </property>
+     </widget>
+     <widget class="QGroupBox" name="mSettingBox_3">
+      <property name="geometry">
+       <rect>
+        <x>500</x>
+        <y>370</y>
+        <width>391</width>
+        <height>131</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>Counting Details</string>
+      </property>
+      <widget class="QLabel" name="str_mesTime_3">
+       <property name="geometry">
+        <rect>
+         <x>610</x>
+         <y>30</y>
+         <width>121</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Measurement Time</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="m_time_3">
+       <property name="geometry">
+        <rect>
+         <x>610</x>
+         <y>50</y>
+         <width>101</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>2.5</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="str_gateTime_5">
+       <property name="geometry">
+        <rect>
+         <x>720</x>
+         <y>50</y>
+         <width>51</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>sec.</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="lineEdit">
+       <property name="geometry">
+        <rect>
+         <x>200</x>
+         <y>30</y>
+         <width>113</width>
+         <height>21</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="lineEdit_2">
+       <property name="geometry">
+        <rect>
+         <x>200</x>
+         <y>80</y>
+         <width>113</width>
+         <height>21</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QPlainTextEdit" name="plainTextEdit">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>30</y>
+         <width>171</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="plainText">
+        <string>Total Number of Photons :</string>
+       </property>
+      </widget>
+      <widget class="QPlainTextEdit" name="plainTextEdit_2">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>70</y>
+         <width>171</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="plainText">
+        <string>Count per molecule :</string>
+       </property>
+      </widget>
+     </widget>
+     <zorder>mSettingBox_3</zorder>
+     <zorder>verticalLayoutWidget</zorder>
+     <zorder>verticalLayoutWidget_2</zorder>
+     <zorder>FCS_DataBtn</zorder>
+     <zorder>btn_measure</zorder>
+     <zorder>verticalLayoutWidget_3</zorder>
+     <zorder>mSettingBox_2</zorder>
+     <zorder>FCS_saveFigBtn</zorder>
     </widget>
     <widget class="QWidget" name="tab_fccs">
      <attribute name="title">
       <string>FCCS</string>
      </attribute>
+     <widget class="QWidget" name="verticalLayoutWidget_4">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>551</width>
+        <height>271</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout"/>
+     </widget>
+     <widget class="QWidget" name="verticalLayoutWidget_6">
+      <property name="geometry">
+       <rect>
+        <x>560</x>
+        <y>0</y>
+        <width>341</width>
+        <height>271</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_3"/>
+     </widget>
+     <widget class="QWidget" name="verticalLayoutWidget_5">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>280</y>
+        <width>551</width>
+        <height>271</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2"/>
+     </widget>
+     <widget class="QWidget" name="verticalLayoutWidget_7">
+      <property name="geometry">
+       <rect>
+        <x>560</x>
+        <y>280</y>
+        <width>341</width>
+        <height>271</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_4"/>
+     </widget>
+     <widget class="QPushButton" name="FCCS_mesure_button">
+      <property name="geometry">
+       <rect>
+        <x>280</x>
+        <y>550</y>
+        <width>113</width>
+        <height>32</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Measure</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="FCCS_saveDataBtn">
+      <property name="geometry">
+       <rect>
+        <x>400</x>
+        <y>550</y>
+        <width>113</width>
+        <height>32</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Save as CSV</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="FCCS_saveFigBtn">
+      <property name="geometry">
+       <rect>
+        <x>520</x>
+        <y>550</y>
+        <width>113</width>
+        <height>32</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Save as EPS</string>
+      </property>
+     </widget>
     </widget>
    </widget>
    <zorder>tabWidget</zorder>
