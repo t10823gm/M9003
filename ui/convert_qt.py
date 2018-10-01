@@ -6,7 +6,7 @@ Created on Thu Jan 11 14:32:07 2018
 """
 from PyQt5 import uic
  
-fin = open('qt_ui.ui', 'r')
+fin = open('qt_ui_tab.ui', 'r')
 fout = open('qt_ui.py', 'w')
 uic.compileUi(fin, fout, execute=False)
 fin.close()
