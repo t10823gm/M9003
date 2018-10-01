@@ -7,7 +7,6 @@ Created on Thu Jan 11 16:18:12 2018
 import sys
 from PyQt5.QtWidgets import (QGraphicsScene, QApplication, QMainWindow, QGridLayout, QVBoxLayout,
                              QHBoxLayout, QWidget, QLabel, QLineEdit, QPushButton, QSizePolicy, QGraphicsPixmapItem)
-from PyQt5 import QtWidgets
 from PyQt5 import QtCore
 from PyQt5 import QtGui
 
@@ -17,6 +16,14 @@ from math import pow
 import random
 import numpy as np
 import pyqtgraph as pg
+
+from PyQt5.QtWidgets import QApplication, QMainWindow, QMenu, QMessageBox
+from PyQt5.QtGui import QIcon
+
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
+
 
 import ctypes
 
@@ -31,27 +38,36 @@ dll.M9003Reset(hM9003)
 
 class MainWindow(QMainWindow, qt_ui.Ui_MainWindow):
     def __init__(self, parent=None):
+
         super(MainWindow, self).__init__(parent=parent)
         self.ui = qt_ui.Ui_MainWindow()
         self.ui.setupUi(self)
         self.timer = QtCore.QTimer()
 
-        #self.menu_quit.addAction('&Quit', self.fileQuit, QtCore.Qt.CTRL + QtCore.Qt.Key_Q)
-
         # set time
         self.ui.m_time.setReadOnly(True)
-        self.ui.gate_time.textChanged.connect(self.calc_time)
-        self.ui.read_data.textChanged.connect(self.calc_time)
+        #self.ui.gate_time.textChanged.connect(self.calc_time)
+        #self.ui.read_data.textChanged.connect(self.calc_time)
 
         # insert logo
-        pixmap = QtGui.QPixmap("./bitmap.png")
-        self.ui.logo.setPixmap(pixmap)
+        #pixmap = QtGui.QPixmap("./bitmap.png")
+        #self.ui.logo.setPixmap(pixmap)
         self.ui.logo.setScaledContents(True)
 
         # set photon_hist list
         photon_hist_ch1 = []
         photon_hist_ch2 = []
 
+        # Graph01 : FCS
+        self.init_FCS_PC_Figure()
+        self.init_FCS_SUM_Figure()
+        self.init_FCS_COLL_Figure()
+
+        '''
+        m = PlotCanvas(self.ui.FCS_photonCount)
+        m.move(0, 0)
+        self.ui.FCS_photonCount.show()
+        
         # Graph01 : photon count of Ch1
         self.graph01 = pg.PlotWidget(self.ui.centralwidget)
         self.graph01.setObjectName("graph01")
@@ -87,13 +103,13 @@ class MainWindow(QMainWindow, qt_ui.Ui_MainWindow):
         self.graph04.setLabel('top', "Temporal Photon Count (Ch02)")
 
 
-        ''' single measurement '''
+        # single measurement
         self.ui.btn_measure.clicked.connect(lambda: self.measurebtnClicked(photon_hist_ch1, photon_hist_ch2))
 
-        ''' loop measurement '''
+        # loop measurement
         self.ui.btn_loopStart.clicked.connect(lambda: self.loop_measurment(photon_hist_ch1, photon_hist_ch2))
         self.ui.btn_loopStop.clicked.connect(self.loop_stop)
-
+    
 
     def measurePhoton(self, photon_hist):
         """run M9003api_ReadData
@@ -164,10 +180,75 @@ class MainWindow(QMainWindow, qt_ui.Ui_MainWindow):
         self.plotCount_Ch2(photon_ch2)
         self.graph04.clear()
         self.plotHist_Ch2(photon_hist_ch2)
+    '''
+    # Figureを作成
+    def init_FCS_PC_Figure(self):
+        self.Figure = plt.figure()
+        # FigureをFigureCanvasに追加
+        self.FigureCanvas = FigureCanvas(self.Figure)
+        # LayoutにFigureCanvasを追加
+        self.ui.FCS_PC_Layout.addWidget(self.FigureCanvas)
+        self.axis = self.Figure.add_subplot(1,1,1)
+        #plt.axis('off')
 
+    def init_FCS_SUM_Figure(self):
+        self.Figure = plt.figure()
+        # FigureをFigureCanvasに追加
+        self.FigureCanvas = FigureCanvas(self.Figure)
+        # LayoutにFigureCanvasを追加
+        self.ui.FCS_photonSum.addWidget(self.FigureCanvas)
+        self.axis = self.Figure.add_subplot(1,1,1)
+        #plt.axis('off')
+
+    def init_FCS_COLL_Figure(self):
+        self.Figure = plt.figure()
+        # FigureをFigureCanvasに追加
+        self.FigureCanvas = FigureCanvas(self.Figure)
+        # LayoutにFigureCanvasを追加
+        self.ui.FCS_collelationFunc.addWidget(self.FigureCanvas)
+        self.axis = self.Figure.add_subplot(1,1,1)
+
+        #plt.axis('off')
+
+    # Figureを更新
+    def update_Figure(self):
+        self.axis_image.set_data(self.image)
+        self.FigureCanvas.draw()
+
+    def plot(self):
+        ''' plot some random stuff '''
+        print('fuck')
+        data = [random.random() for i in range(25)]
+        self.axes.plot(data, '*-')
+        self.canvas.draw()
 
 pg.setConfigOption('foreground', 'k')
 pg.setConfigOption('background', 'w')
+
+
+class PlotCanvas(FigureCanvas):
+
+    def __init__(self, parent=None, dpi=100):
+        fig = Figure(dpi=dpi)
+
+        FigureCanvas.__init__(self, fig)
+        self.setParent(parent)
+
+        FigureCanvas.setSizePolicy(self,
+                                   QSizePolicy.Expanding,
+                                   QSizePolicy.Expanding)
+        FigureCanvas.updateGeometry(self)
+        fig.tight_layout()
+        self.plot()
+
+    def plot(self):
+        data = [random.random() for i in range(25)]
+        ax = self.figure.add_subplot(111)
+        ax.plot(data, 'r-')
+        ax.set_title('PhotonCount')
+        self.draw()
+
+
 
 if __name__ == "__main__":
     import sys
