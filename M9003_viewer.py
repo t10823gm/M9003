@@ -46,80 +46,49 @@ class MainWindow(QMainWindow, qt_ui.Ui_MainWindow):
 
         # set time
         self.ui.m_time.setReadOnly(True)
-        #self.ui.gate_time.textChanged.connect(self.calc_time)
-        #self.ui.read_data.textChanged.connect(self.calc_time)
+        self.ui.gate_time.textChanged.connect(self.check_blank)
+        self.ui.read_data.textChanged.connect(self.check_blank)
+
 
         # insert logo
         #pixmap = QtGui.QPixmap("./bitmap.png")
         #self.ui.logo.setPixmap(pixmap)
         self.ui.logo.setScaledContents(True)
 
-        # set photon_hist list
-        photon_hist_ch1 = []
-        photon_hist_ch2 = []
+        # watch combobox index
+        self.ui.channelBox.setCurrentIndex(0)
+        self.ui.channelBox.currentIndexChanged.connect(self.on_combobox_changed)
 
-        # Graph01 : FCS
+        # set initial tab
+        self.ui.tabWidget.setCurrentIndex(0)
+
+        ''' FCS '''
+        # Initiation of figure for FCS
         self.init_FCS_PC_Figure()
         self.init_FCS_SUM_Figure()
         self.init_FCS_COLL_Figure()
 
-        '''
-        m = PlotCanvas(self.ui.FCS_photonCount)
-        m.move(0, 0)
-        self.ui.FCS_photonCount.show()
-        
-        # Graph01 : photon count of Ch1
-        self.graph01 = pg.PlotWidget(self.ui.centralwidget)
-        self.graph01.setObjectName("graph01")
-        self.ui.countCh1.addWidget(self.graph01)
-        self.graph01.setLabel('left', "Photon Count", units='photon')
-        self.graph01.setLabel('bottom', "Time", )
-        self.graph01.setLabel('top', "Temporal Photon Count (Ch01)")
-        self.graph01.setLabel('left', "Photon Count", units='photon')
+        ''' FCCS '''
+        self.init_FCCS_ch1_PC_Figure()
+        self.init_FCCS_ch2_PC_Figure()
+        self.init_FCCS_ch1_COLL_Figure()
+        self.init_FCCS_ch2_COLL_Figure()
 
-        # Graph02 : photon sum history of Ch1
-        self.graph02 = pg.PlotWidget(self.ui.centralwidget)
-        self.graph02.setObjectName("graph02")
-        self.ui.sumCh1.addWidget(self.graph02)
-        self.graph02.setLabel('left', "Total Photon Count", units='photon')
-        #self.graph02.setLabel('bottom', "Time", )
-        self.graph02.setLabel('top', "Temporal Photon Count (Ch01)")
-
-        # Graph03 : photon count of Ch2
-        self.graph03 = pg.PlotWidget(self.ui.centralwidget)
-        self.graph03.setObjectName("graph03")
-        self.ui.countCh2.addWidget(self.graph03)
-        self.graph03.setLabel('left', "Photon Count", units='photon')
-        self.graph03.setLabel('bottom', "Time",)
-        self.graph03.setLabel('top', "Temporal Photon Count (Ch02)")
-        self.graph03.setLabel('left', "Photon Count", units='photon')
-
-        # Graph02 : photon sum history of Ch2
-        self.graph04 = pg.PlotWidget(self.ui.centralwidget)
-        self.graph04.setObjectName("graph04")
-        self.ui.sumCh2.addWidget(self.graph04)
-        self.graph04.setLabel('left', "Total Photon Count", units='photon')
-        #self.graph04.setLabel('bottom', "Time", )
-        self.graph04.setLabel('top', "Temporal Photon Count (Ch02)")
+        # set photon_hist list
+        photon_hist_ch1 = []
+        photon_hist_ch2 = []
 
 
-        # single measurement
-        self.ui.btn_measure.clicked.connect(lambda: self.measurebtnClicked(photon_hist_ch1, photon_hist_ch2))
+        # FCS single measurement
+        self.ui.measureBtn.clicked.connect(lambda: self.measurebtnClicked(photon_hist_ch1, photon_hist_ch2))
 
         # loop measurement
-        self.ui.btn_loopStart.clicked.connect(lambda: self.loop_measurment(photon_hist_ch1, photon_hist_ch2))
-        self.ui.btn_loopStop.clicked.connect(self.loop_stop)
-    
+        # self.ui.btn_loopStart.clicked.connect(lambda: self.loop_measurment(photon_hist_ch1, photon_hist_ch2))
+        # self.ui.btn_loopStop.clicked.connect(self.loop_stop)
 
-    def measurePhoton(self, photon_hist):
-        """run M9003api_ReadData
-            assign temporal random value """
-        photon = np.random.randint(0, 30, 100)
-        photon_sum = sum(photon)
-        photon_hist.append(photon_sum)
-        return photon, photon_hist
+        '''
 
-
+        
     def plotCount_Ch1(self, photon):
         self.graph01.plot(photon)
 
@@ -136,10 +105,6 @@ class MainWindow(QMainWindow, qt_ui.Ui_MainWindow):
             photon_hist.pop(0)
         self.graph04.plot(photon_hist)
 
-    def calc_time(self):
-        g = int(self.ui.gate_time.text()) * 50
-        r = int(self.ui.read_data.text())
-        self.ui.m_time.setText(str((r * g) / pow(10, 9)))
 
     def doSomething(self):
         print("I'm doing something")
@@ -163,15 +128,118 @@ class MainWindow(QMainWindow, qt_ui.Ui_MainWindow):
     def fileQuit(self):
         self.close()
 
+
+    '''
+
+    # テキストボックスに数字が入力されているかを確認
+    def check_blank(self):
+        gt = self.ui.gate_time.text()
+        rd = self.ui.read_data.text()
+        if gt.isnumeric() == True and rd.isnumeric() == True:
+            print(gt, rd)
+            self.calc_time()
+        else:
+            print('fuck')
+
+    # 測定にかかる時間を計算
+    def calc_time(self):
+        g = int(self.ui.gate_time.text()) * 50
+        r = int(self.ui.read_data.text())
+        self.ui.m_time.setText(str((r * g) / pow(10, 9)))
+
+    # チャンネルの情報の変更に伴うタブの切替え
+    def on_combobox_changed(self, value):
+        if value != 2:
+            self.ui.tabWidget.setCurrentIndex(0)
+        else:
+            self.ui.tabWidget.setCurrentIndex(1)
+
+    # Figureを作成
+    pg.setConfigOption('background', None)
+    pg.setConfigOption('foreground', 'k')
+    def init_FCS_PC_Figure(self):
+        self.fig = pg.PlotWidget()
+        self.ui.FCS_PC_Layout.addWidget(self.fig)
+        self.fig.setLabel('left', "Photon Count", units='photon')
+        self.fig.setLabel('bottom', "Time", )
+        self.fig.setLabel('top', "Temporal Photon Count")
+        self.fig.setLabel('left', "Photon Count", units='photon')
+
+    def init_FCS_SUM_Figure(self):
+        self.fig = pg.PlotWidget()
+        self.ui.FCS_PS_Layout.addWidget(self.fig)
+        self.fig.setLabel('left', "Photon Count", units='photon')
+        self.fig.setLabel('bottom', "Time", )
+        self.fig.setLabel('top', "Temporal Photon Count")
+        self.fig.setLabel('left', "Photon Count", units='photon')
+
+    def init_FCS_COLL_Figure(self):
+        self.Figure = plt.figure()
+        # FigureをFigureCanvasに追加
+        self.FigureCanvas = FigureCanvas(self.Figure)
+        # LayoutにFigureCanvasを追加
+        self.ui.FCS_CF_Layout.addWidget(self.FigureCanvas)
+        self.axis = self.Figure.add_subplot(111, position=[0.05, 0.05, 0.05, 0.05])
+        plt.xlabel('Time lag')
+        plt.ylabel('Coll function')
+        plt.tight_layout()
+
+    def init_FCCS_ch1_PC_Figure(self):
+        self.fig = pg.PlotWidget()
+        self.ui.FCCS_Ch1_photonCount.addWidget(self.fig)
+        self.fig.setLabel('left', "Photon Count", units='photon')
+        self.fig.setLabel('bottom', "Time", )
+        self.fig.setLabel('top', "Temporal Photon Count")
+        self.fig.setLabel('left', "Photon Count", units='photon')
+
+    def init_FCCS_ch2_PC_Figure(self):
+        self.fig = pg.PlotWidget()
+        self.ui.FCCS_Ch2_photonCount.addWidget(self.fig)
+        self.fig.setLabel('left', "Photon Count", units='photon')
+        self.fig.setLabel('bottom', "Time", )
+        self.fig.setLabel('top', "Temporal Photon Count")
+        self.fig.setLabel('left', "Photon Count", units='photon')
+
+    def init_FCCS_ch1_COLL_Figure(self):
+        self.Figure = plt.figure()
+        # FigureをFigureCanvasに追加
+        self.FigureCanvas = FigureCanvas(self.Figure)
+        # LayoutにFigureCanvasを追加
+        self.ui.FCCS_Ch1_colFunc.addWidget(self.FigureCanvas)
+        self.axis = self.Figure.add_subplot(111, position=[0.05, 0.05, 0.05, 0.05])
+        plt.xlabel('Time lag')
+        plt.ylabel('Coll function')
+        plt.tight_layout()
+
+    def init_FCCS_ch2_COLL_Figure(self):
+        self.Figure = plt.figure()
+        # FigureをFigureCanvasに追加
+        self.FigureCanvas = FigureCanvas(self.Figure)
+        # LayoutにFigureCanvasを追加
+        self.ui.FCCS_Ch2_colFunc.addWidget(self.FigureCanvas)
+        self.axis = self.Figure.add_subplot(1,1,1, position=[0.05, 0.05, 0.05, 0.05])
+        self.axis.set_xlabel('Time lag')
+        self.axis.set_ylabel('Time lag')
+        plt.tight_layout()
+
+    def measurePhoton(self, photon_hist):
+        """run M9003api_ReadData
+                        assign temporal random value """
+        photon = np.random.randint(0, 30, 100)
+        photon_sum = sum(photon)
+        photon_hist.append(photon_sum)
+        return photon, photon_hist
+
     def measurebtnClicked(self, photon_hist_ch1, photon_hist_ch2):
-        #print(type(photon_hist_ch1))
-        #sender = self.sender()
-        #self.statusBar().showMessage(sender.text() + ' was pressed')
+        '''
+        print(type(photon_hist_ch1))
+        sender = self.sender()
+        self.statusBar().showMessage(sender.text() + ' was pressed')
 
         photon_ch1, photon_hist_ch1 = self.measurePhoton(photon_hist_ch1)
         photon_ch2, photon_hist_ch2 = self.measurePhoton(photon_hist_ch2)
 
-        self.graph01.clear()
+        self.ui.FCCS_Ch1_photonCount.clear()
         self.plotCount_Ch1(photon_ch1)
         self.graph02.clear()
         self.plotHist_Ch1(photon_hist_ch1)
@@ -180,73 +248,7 @@ class MainWindow(QMainWindow, qt_ui.Ui_MainWindow):
         self.plotCount_Ch2(photon_ch2)
         self.graph04.clear()
         self.plotHist_Ch2(photon_hist_ch2)
-    '''
-    # Figureを作成
-    def init_FCS_PC_Figure(self):
-        self.Figure = plt.figure()
-        # FigureをFigureCanvasに追加
-        self.FigureCanvas = FigureCanvas(self.Figure)
-        # LayoutにFigureCanvasを追加
-        self.ui.FCS_PC_Layout.addWidget(self.FigureCanvas)
-        self.axis = self.Figure.add_subplot(1,1,1)
-        #plt.axis('off')
-
-    def init_FCS_SUM_Figure(self):
-        self.Figure = plt.figure()
-        # FigureをFigureCanvasに追加
-        self.FigureCanvas = FigureCanvas(self.Figure)
-        # LayoutにFigureCanvasを追加
-        self.ui.FCS_photonSum.addWidget(self.FigureCanvas)
-        self.axis = self.Figure.add_subplot(1,1,1)
-        #plt.axis('off')
-
-    def init_FCS_COLL_Figure(self):
-        self.Figure = plt.figure()
-        # FigureをFigureCanvasに追加
-        self.FigureCanvas = FigureCanvas(self.Figure)
-        # LayoutにFigureCanvasを追加
-        self.ui.FCS_collelationFunc.addWidget(self.FigureCanvas)
-        self.axis = self.Figure.add_subplot(1,1,1)
-
-        #plt.axis('off')
-
-    # Figureを更新
-    def update_Figure(self):
-        self.axis_image.set_data(self.image)
-        self.FigureCanvas.draw()
-
-    def plot(self):
-        ''' plot some random stuff '''
-        print('fuck')
-        data = [random.random() for i in range(25)]
-        self.axes.plot(data, '*-')
-        self.canvas.draw()
-
-pg.setConfigOption('foreground', 'k')
-pg.setConfigOption('background', 'w')
-
-
-class PlotCanvas(FigureCanvas):
-
-    def __init__(self, parent=None, dpi=100):
-        fig = Figure(dpi=dpi)
-
-        FigureCanvas.__init__(self, fig)
-        self.setParent(parent)
-
-        FigureCanvas.setSizePolicy(self,
-                                   QSizePolicy.Expanding,
-                                   QSizePolicy.Expanding)
-        FigureCanvas.updateGeometry(self)
-        fig.tight_layout()
-        self.plot()
-
-    def plot(self):
-        data = [random.random() for i in range(25)]
-        ax = self.figure.add_subplot(111)
-        ax.plot(data, 'r-')
-        ax.set_title('PhotonCount')
-        self.draw()
+        '''
 
 
 
