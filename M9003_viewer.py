@@ -75,61 +75,15 @@ class MainWindow(QMainWindow, qt_ui.Ui_MainWindow):
         self.init_FCCS_ch2_COLL_Figure()
 
         # set photon_hist list
-        photon_hist_ch1 = []
-        photon_hist_ch2 = []
-
+        photon_hist = []
 
         # FCS single measurement
-        self.ui.measureBtn.clicked.connect(lambda: self.measurebtnClicked(photon_hist_ch1, photon_hist_ch2))
+        self.ui.measureBtn.clicked.connect(lambda: self.measurebtnClicked(photon_hist))
 
         # loop measurement
-        # self.ui.btn_loopStart.clicked.connect(lambda: self.loop_measurment(photon_hist_ch1, photon_hist_ch2))
-        # self.ui.btn_loopStop.clicked.connect(self.loop_stop)
+        self.ui.btn_loopStart.clicked.connect(lambda: self.loop_measurment(photon_hist))
+        self.ui.btn_loopStop.clicked.connect(self.loop_stop)
 
-        '''
-
-        
-    def plotCount_Ch1(self, photon):
-        self.graph01.plot(photon)
-
-    def plotCount_Ch2(self, photon):
-        self.graph03.plot(photon)
-
-    def plotHist_Ch1(self, photon_hist):
-        if len(photon_hist) > 10:
-            photon_hist.pop(0)
-        self.graph02.plot(photon_hist)
-
-    def plotHist_Ch2(self, photon_hist):
-        if len(photon_hist) > 10:
-            photon_hist.pop(0)
-        self.graph04.plot(photon_hist)
-
-
-    def doSomething(self):
-        print("I'm doing something")
-
-    def loop_measurment(self, photon_hist_ch1, photon_hist_ch2):
-        self.timer.timeout.connect(lambda: self.measurebtnClicked(photon_hist_ch1, photon_hist_ch2))
-        interval = (int(self.ui.gate_time.text()) * 50) * int(self.ui.read_data.text()) / pow(10, 6)
-        print(interval)
-        self.timer.start(interval + 100)
-
-    def loop_stop(self):
-        print('loop stop!')
-        self.timer.stop()
-
-    def playScansPressed(self):
-        if self.playScansAction.isChecked():
-            self.playTimer.start()
-        else:
-            self.playTimer.stop()
-
-    def fileQuit(self):
-        self.close()
-
-
-    '''
 
     # テキストボックスに数字が入力されているかを確認
     def check_blank(self):
@@ -139,7 +93,7 @@ class MainWindow(QMainWindow, qt_ui.Ui_MainWindow):
             print(gt, rd)
             self.calc_time()
         else:
-            print('fuck')
+            print('error')
 
     # 測定にかかる時間を計算
     def calc_time(self):
@@ -157,21 +111,22 @@ class MainWindow(QMainWindow, qt_ui.Ui_MainWindow):
     # Figureを作成
     pg.setConfigOption('background', None)
     pg.setConfigOption('foreground', 'k')
+
     def init_FCS_PC_Figure(self):
-        self.fig = pg.PlotWidget()
-        self.ui.FCS_PC_Layout.addWidget(self.fig)
-        self.fig.setLabel('left', "Photon Count", units='photon')
-        self.fig.setLabel('bottom', "Time", )
-        self.fig.setLabel('top', "Temporal Photon Count")
-        self.fig.setLabel('left', "Photon Count", units='photon')
+        self.FCS_PC_fig = pg.PlotWidget()
+        self.ui.FCS_PC_Layout.addWidget(self.FCS_PC_fig)
+        self.FCS_PC_fig.setLabel('left', "Photon Count", units='photon')
+        self.FCS_PC_fig.setLabel('bottom', "Time", )
+        self.FCS_PC_fig.setLabel('top', "Temporal Photon Count")
+        self.FCS_PC_fig.setLabel('left', "Photon Count", units='photon')
 
     def init_FCS_SUM_Figure(self):
-        self.fig = pg.PlotWidget()
-        self.ui.FCS_PS_Layout.addWidget(self.fig)
-        self.fig.setLabel('left', "Photon Count", units='photon')
-        self.fig.setLabel('bottom', "Time", )
-        self.fig.setLabel('top', "Temporal Photon Count")
-        self.fig.setLabel('left', "Photon Count", units='photon')
+        self.FCS_PS_fig = pg.PlotWidget()
+        self.ui.FCS_PS_Layout.addWidget(self.FCS_PS_fig)
+        self.FCS_PS_fig.setLabel('left', "Total Photon Count", units='photon')
+        self.FCS_PS_fig.setLabel('bottom', "Time", )
+        self.FCS_PS_fig.setLabel('top', "Total Photon Count")
+        self.FCS_PS_fig.setLabel('left', "Photon Count", units='photon')
 
     def init_FCS_COLL_Figure(self):
         self.Figure = plt.figure()
@@ -230,27 +185,40 @@ class MainWindow(QMainWindow, qt_ui.Ui_MainWindow):
         photon_hist.append(photon_sum)
         return photon, photon_hist
 
-    def measurebtnClicked(self, photon_hist_ch1, photon_hist_ch2):
-        '''
-        print(type(photon_hist_ch1))
+
+    def measurebtnClicked(self, photon_hist):
         sender = self.sender()
-        self.statusBar().showMessage(sender.text() + ' was pressed')
+        #self.statusBar().showMessage(sender.text() + ' was pressed')
+        photon, photon_hist = self.measurePhoton(photon_hist)
 
-        photon_ch1, photon_hist_ch1 = self.measurePhoton(photon_hist_ch1)
-        photon_ch2, photon_hist_ch2 = self.measurePhoton(photon_hist_ch2)
+        if self.ui.tabWidget.currentIndex() != 1:
+            # FCS
+            self.plotFCSphotoncount(photon)
+            self.plotFCShist(photon_hist)
+        else:
+            print('FCCS')
 
-        self.ui.FCCS_Ch1_photonCount.clear()
-        self.plotCount_Ch1(photon_ch1)
-        self.graph02.clear()
-        self.plotHist_Ch1(photon_hist_ch1)
+    def plotFCSphotoncount(self, photon):
+        self.FCS_PC_fig.clear()
+        self.FCS_PC_fig.plot(photon)
+        self.FCS_PC_fig.show()
 
-        self.graph03.clear()
-        self.plotCount_Ch2(photon_ch2)
-        self.graph04.clear()
-        self.plotHist_Ch2(photon_hist_ch2)
-        '''
+    def plotFCShist(self, photon_hist):
+        self.FCS_PS_fig.clear()
+        if len(photon_hist) > 10:
+            photon_hist.pop(0)
+        self.FCS_PS_fig.plot(photon_hist)
+        self.FCS_PS_fig.show()
 
+    def loop_measurment(self, photon_hist):
+        self.timer.timeout.connect(lambda: self.measurebtnClicked(photon_hist))
+        interval = (int(self.ui.gate_time.text()) * 50) * int(self.ui.read_data.text()) / pow(10, 6)
+        print(interval)
+        self.timer.start(interval)
 
+    def loop_stop(self):
+        print('loop stop!')
+        self.timer.stop()
 
 if __name__ == "__main__":
     import sys
