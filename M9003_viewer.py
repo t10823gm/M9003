@@ -9,6 +9,7 @@ from PyQt5.QtWidgets import (QGraphicsScene, QApplication, QMainWindow, QGridLay
                              QHBoxLayout, QWidget, QLabel, QLineEdit, QPushButton, QSizePolicy, QGraphicsPixmapItem)
 from PyQt5 import QtCore
 from PyQt5 import QtGui
+from PyQt5.Qt import QRect, QPainter
 
 from ui import qt_ui
 from math import pow
@@ -183,12 +184,12 @@ class MainWindow(QMainWindow, qt_ui.Ui_MainWindow):
         photon = np.random.randint(0, 30, 100)
         photon_sum = sum(photon)
         photon_hist.append(photon_sum)
+        self.ui.calc_total_photon.setText(str(photon_sum))
         return photon, photon_hist
 
 
     def measurebtnClicked(self, photon_hist):
-        sender = self.sender()
-        #self.statusBar().showMessage(sender.text() + ' was pressed')
+        self.check_measure()
         photon, photon_hist = self.measurePhoton(photon_hist)
 
         if self.ui.tabWidget.currentIndex() != 1:
@@ -219,6 +220,28 @@ class MainWindow(QMainWindow, qt_ui.Ui_MainWindow):
     def loop_stop(self):
         print('loop stop!')
         self.timer.stop()
+
+    def check_measure(self):
+        gt = self.ui.gate_time.text()
+        rd = self.ui.read_data.text()
+        if gt.isnumeric() != True or rd.isnumeric() != True:
+            errorPopup()
+        else:
+            pass
+
+class errorPopup(QWidget):
+    def __init__(self):
+        ew = QWidget.__init__(self)
+        self.showError()
+
+    def showError(self):
+        print("showError is working")
+        qmb = QMessageBox(self)
+        qmb.setIcon(QMessageBox.Warning)
+        qmb.setText("Value must be integer.")
+        qmb.setWindowTitle("Measurement Error")
+        qmb.exec()
+
 
 if __name__ == "__main__":
     import sys
