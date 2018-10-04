@@ -5,28 +5,22 @@ Created on Thu Jan 11 16:18:12 2018
 @author: Gembu MARYU
 """
 import sys
-from PyQt5.QtWidgets import (QGraphicsScene, QApplication, QMainWindow, QGridLayout, QVBoxLayout,
+from PyQt5.QtWidgets import (QGraphicsScene, QApplication, QMainWindow, QGridLayout, QVBoxLayout, QFileDialog,
                              QHBoxLayout, QWidget, QLabel, QLineEdit, QPushButton, QSizePolicy, QGraphicsPixmapItem)
 from PyQt5 import QtCore
-from PyQt5 import QtGui
-from PyQt5.Qt import QRect, QPainter
+from PyQt5.QtWidgets import QApplication, QMainWindow, QMenu, QMessageBox
 
-from ui import qt_ui
 from math import pow
 
-import random
 import numpy as np
 import pyqtgraph as pg
-
-from PyQt5.QtWidgets import QApplication, QMainWindow, QMenu, QMessageBox
-from PyQt5.QtGui import QIcon
-
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
-
+from ui import qt_ui
 import ctypes
+
+
 
 """Load M9003 API from dll
 dll = ctypes.windll.LoadLibrary('./M9003api.dll')
@@ -45,7 +39,7 @@ class MainWindow(QMainWindow, qt_ui.Ui_MainWindow):
         self.ui.setupUi(self)
         self.timer = QtCore.QTimer()
 
-        # set time
+        # set measurement time value
         self.ui.m_time.setReadOnly(True)
         self.ui.gate_time.textChanged.connect(self.check_blank)
         self.ui.read_data.textChanged.connect(self.check_blank)
@@ -63,27 +57,32 @@ class MainWindow(QMainWindow, qt_ui.Ui_MainWindow):
         # set initial tab
         self.ui.tabWidget.setCurrentIndex(0)
 
+        # initiate figures
         ''' FCS '''
-        # Initiation of figure for FCS
         self.init_FCS_PC_Figure()
         self.init_FCS_SUM_Figure()
-        self.init_FCS_COLL_Figure()
+        self.init_FCS_CORR_Figure()
 
         ''' FCCS '''
         self.init_FCCS_ch1_PC_Figure()
         self.init_FCCS_ch2_PC_Figure()
-        self.init_FCCS_ch1_COLL_Figure()
-        self.init_FCCS_ch2_COLL_Figure()
+        self.init_FCCS_ch1_CORR_Figure()
+        self.init_FCCS_ch2_CORR_Figure()
 
         # set photon_hist list
         photon_hist = []
 
-        # FCS single measurement
+        # single measurement
         self.ui.measureBtn.clicked.connect(lambda: self.measurebtnClicked(photon_hist))
+        self.ui.measureBtn.clicked.connect(lambda: self.calcCorrFunc())
 
         # loop measurement
         self.ui.btn_loopStart.clicked.connect(lambda: self.loop_measurment(photon_hist))
         self.ui.btn_loopStop.clicked.connect(self.loop_stop)
+
+        # save photon count data as csv file
+        self.ui.saveDataBtn.clicked.connect(lambda: self.saveasCSV(self.photon))
+        self.ui.saveFigBtn.clicked.connect(lambda: self.saveasEPS())
 
 
     # テキストボックスに数字が入力されているかを確認
@@ -129,15 +128,19 @@ class MainWindow(QMainWindow, qt_ui.Ui_MainWindow):
         self.FCS_PS_fig.setLabel('top', "Total Photon Count")
         self.FCS_PS_fig.setLabel('left', "Photon Count", units='photon')
 
-    def init_FCS_COLL_Figure(self):
-        self.Figure = plt.figure()
+    def init_FCS_CORR_Figure(self):
+        self.FCS_CORR_fig = plt.figure()
         # FigureをFigureCanvasに追加
-        self.FigureCanvas = FigureCanvas(self.Figure)
+        self.FCS_CORR_FigureCanvas = FigureCanvas(self.FCS_CORR_fig)
         # LayoutにFigureCanvasを追加
-        self.ui.FCS_CF_Layout.addWidget(self.FigureCanvas)
-        self.axis = self.Figure.add_subplot(111, position=[0.05, 0.05, 0.05, 0.05])
+        self.ui.FCS_CF_Layout.addWidget(self.FCS_CORR_FigureCanvas)
+        self.axis_FCS_CORR = self.FCS_CORR_fig.add_subplot(111, position=[0.05, 0.05, 0.05, 0.05])
+        self.FCS_CORR_fig.patch.set_facecolor('white')
+        self.FCS_CORR_fig.patch.set_alpha(0.0)
+        self.axis_FCS_CORR.patch.set_facecolor('white')
+        self.axis_FCS_CORR.patch.set_alpha(0.0)
         plt.xlabel('Time lag')
-        plt.ylabel('Coll function')
+        plt.ylabel('Corr function')
         plt.tight_layout()
 
     def init_FCCS_ch1_PC_Figure(self):
@@ -156,24 +159,32 @@ class MainWindow(QMainWindow, qt_ui.Ui_MainWindow):
         self.fig.setLabel('top', "Temporal Photon Count")
         self.fig.setLabel('left', "Photon Count", units='photon')
 
-    def init_FCCS_ch1_COLL_Figure(self):
+    def init_FCCS_ch1_CORR_Figure(self):
         self.Figure = plt.figure()
         # FigureをFigureCanvasに追加
         self.FigureCanvas = FigureCanvas(self.Figure)
         # LayoutにFigureCanvasを追加
         self.ui.FCCS_Ch1_colFunc.addWidget(self.FigureCanvas)
         self.axis = self.Figure.add_subplot(111, position=[0.05, 0.05, 0.05, 0.05])
+        self.Figure.patch.set_facecolor('white')
+        self.Figure.patch.set_alpha(0.0)
+        self.axis.patch.set_facecolor('white')
+        self.axis.patch.set_alpha(0.0)
         plt.xlabel('Time lag')
-        plt.ylabel('Coll function')
+        plt.ylabel('Corr function')
         plt.tight_layout()
 
-    def init_FCCS_ch2_COLL_Figure(self):
+    def init_FCCS_ch2_CORR_Figure(self):
         self.Figure = plt.figure()
         # FigureをFigureCanvasに追加
         self.FigureCanvas = FigureCanvas(self.Figure)
         # LayoutにFigureCanvasを追加
         self.ui.FCCS_Ch2_colFunc.addWidget(self.FigureCanvas)
         self.axis = self.Figure.add_subplot(1,1,1, position=[0.05, 0.05, 0.05, 0.05])
+        self.Figure.patch.set_facecolor('white')
+        self.Figure.patch.set_alpha(0.0)
+        self.axis.patch.set_facecolor('white')
+        self.axis.patch.set_alpha(0.0)
         self.axis.set_xlabel('Time lag')
         self.axis.set_ylabel('Time lag')
         plt.tight_layout()
@@ -181,20 +192,30 @@ class MainWindow(QMainWindow, qt_ui.Ui_MainWindow):
     def measurePhoton(self, photon_hist):
         """run M9003api_ReadData
                         assign temporal random value """
-        photon = np.random.randint(0, 30, 100)
-        photon_sum = sum(photon)
+        self.photon = np.random.randint(0, 30, 100)
+        photon_sum = sum(self.photon)
         photon_hist.append(photon_sum)
         self.ui.calc_total_photon.setText(str(photon_sum))
-        return photon, photon_hist
+        return photon_hist
 
+    def calcCorrFunc(self):
+        A = 1  # 振幅
+        fs = np.random.randint(100)  # サンプリング周波数
+        f0 = 4  # 基本周波数(今回はラ)
+        sec = 10  # 秒
+        point = np.arange(0, fs * sec)
+        sin_wave = A * np.sin(2 * np.pi * f0 * point / fs)
+        sin_wave = [int(x * 32767.0) for x in sin_wave]
+        self.axis_FCS_CORR.clear()
+        self.axis_FCS_CORR.plot(sin_wave)
+        self.FCS_CORR_FigureCanvas.draw()
 
     def measurebtnClicked(self, photon_hist):
         self.check_measure()
-        photon, photon_hist = self.measurePhoton(photon_hist)
-
+        photon_hist = self.measurePhoton(photon_hist)
         if self.ui.tabWidget.currentIndex() != 1:
             # FCS
-            self.plotFCSphotoncount(photon)
+            self.plotFCSphotoncount(self.photon)
             self.plotFCShist(photon_hist)
         else:
             print('FCCS')
@@ -229,8 +250,22 @@ class MainWindow(QMainWindow, qt_ui.Ui_MainWindow):
         else:
             pass
 
+    def saveasCSV(self, photon):
+        import csv
+        name = QFileDialog.getSaveFileName(self, 'Save as CSV File')
+        f = open(name[0], 'w')
+        print(f)
+        writer = csv.writer(f, lineterminator=',')
+        writer.writerow(photon)
+        f.close()
+
+    def saveasEPS(self):
+        name = QFileDialog.getSaveFileName(self, 'Save as EPS File')
+        self.FCS_CORR_fig.savefig(name[0])
+
+
 class errorPopup(QWidget):
-    def __init__(self):
+    def __init__(self) -> object:
         ew = QWidget.__init__(self)
         self.showError()
 
@@ -241,7 +276,6 @@ class errorPopup(QWidget):
         qmb.setText("Value must be integer.")
         qmb.setWindowTitle("Measurement Error")
         qmb.exec()
-
 
 if __name__ == "__main__":
     import sys
