@@ -59,7 +59,7 @@ dll.M9003ReadData.restype = c_bool
 dll.M9003ReadData.argtypes = [wintypes.HANDLE, c_void_p, POINTER(wintypes.DWORD)]
 
 # FCCS
-dataBuffer = (wintypes.DWORD*2*3340)()
+dataBuffer = (wintypes.DWORD*2*2500)()
 
 # FCS
 #dataBuffer = (wintypes.BYTE*6680)()
@@ -67,7 +67,7 @@ dataBuffer = (wintypes.DWORD*2*3340)()
 
 """dataLnegth value should be assigned via GUI
     dataLength value must be smaller than dataBuffer size"""
-dataLength = 6000
+dataLength = 5000
 rd = dll.M9003ReadData(hM9003, dataBuffer, byref(wintypes.DWORD(dataLength)))
 print('ReadData: ', rd)
 
@@ -96,36 +96,6 @@ import sys
 print("Endian of this PC: ", sys.byteorder)
 
 ''' convert data type of dataBuffer '''
-#convData = cast(dataBuffer, POINTER(wintypes.DWORD))
-#convData = cast(dataBuffer, POINTER(POINTER(wintypes.DWORD)))
-
-def conv2darray(db, dlen):
-    casted = cast(db, POINTER(wintypes.DWORD))
-    for i in range(dlen):
-        tmp = casted[i]
-        x = struct.pack('<L', tmp)
-        y = (struct.unpack('<BBBB', x))
-        chl1.append(y[0])
-        chl1.append(y[2])
-        chl2.append(y[1])
-        chl2.append(y[3])
-
-def convDWORD2int(data):
-    x = struct.pack('<L', data)
-    y = (struct.unpack('<BBBB', x))
-    return y
-#hoge = [[convDWORD2int(convData[o][i]) for i in range(2)]
-#            for o in range(1670)]
-cha = 1
-def convDWORD2int2(data, ch):
-    x = struct.pack('L', data)
-    if cha == 1:
-        y = (struct.unpack('<xBxB', x))
-    elif cha ==2:
-        y = (struct.unpack('<BxBx', x))
-        
-    return y
-
 
 def cast_2d_pointer_to_2d_list(ctype_2d_pointer_value, outer_rank, inner_rank):
     '''Cast ctypes's 2d-pointer or 2d-array to Python 2d-List
@@ -137,6 +107,24 @@ def cast_2d_pointer_to_2d_list(ctype_2d_pointer_value, outer_rank, inner_rank):
         List(python object like c_types): Python cast list
     '''
     return [[ctype_2d_pointer_value[o][i] for i in range(inner_rank)]
-            for o in range(outer_rank)]
+             for o in range(outer_rank)]
 
-dworddata = cast_2d_pointer_to_2d_list(dataBuffer,3340,2)
+
+countData = np.array(cast_2d_pointer_to_2d_list(dataBuffer,2500,2))
+
+ch1data = countData[:,0]; ch2data = countData[:,1]
+
+def countDataByteOrder(data):
+    bodata = []
+    for i in data:
+        #print("4byte val: ", i)
+        byteorder = struct.pack("<L", i)
+        byteorder = struct.unpack("BBBB", byteorder)
+        #print("1byte val: ", byteorder)
+        bodata.append(byteorder)
+    bodata = np.array(bodata)
+    bodata = bodata.flatten()
+    return bodata
+
+bo_ch1data = countDataByteOrder(ch1data)
+bo_ch2data = countDataByteOrder(ch2data)
