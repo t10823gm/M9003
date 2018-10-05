@@ -1,0 +1,618 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>950</width>
+    <height>750</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <widget class="QGroupBox" name="mSettingBox">
+    <property name="geometry">
+     <rect>
+      <x>110</x>
+      <y>10</y>
+      <width>801</width>
+      <height>91</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Measurement Setting</string>
+    </property>
+    <widget class="QLabel" name="str_gateTime">
+     <property name="geometry">
+      <rect>
+       <x>210</x>
+       <y>30</y>
+       <width>81</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <weight>50</weight>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Gate Time</string>
+     </property>
+    </widget>
+    <widget class="QWidget" name="horizontalLayoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>210</x>
+       <y>40</y>
+       <width>151</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <layout class="QHBoxLayout" name="getTime_hLayout">
+      <item>
+       <widget class="QLineEdit" name="gate_time">
+        <property name="text">
+         <string>50</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="x50ns">
+        <property name="text">
+         <string>* 50nsec</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QLabel" name="str_readData">
+     <property name="geometry">
+      <rect>
+       <x>400</x>
+       <y>30</y>
+       <width>141</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <weight>50</weight>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Read Data (MAX: 64M)</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="str_mesTime">
+     <property name="geometry">
+      <rect>
+       <x>610</x>
+       <y>30</y>
+       <width>121</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <weight>50</weight>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Measurement Time</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="m_time">
+     <property name="geometry">
+      <rect>
+       <x>610</x>
+       <y>50</y>
+       <width>101</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>2.5</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="str_gateTime_2">
+     <property name="geometry">
+      <rect>
+       <x>720</x>
+       <y>50</y>
+       <width>51</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>sec.</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="read_data">
+     <property name="geometry">
+      <rect>
+       <x>400</x>
+       <y>50</y>
+       <width>121</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>1000000</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="channelBox">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>40</y>
+       <width>121</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <item>
+      <property name="text">
+       <string>Ch. 1 (Green)</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Ch. 2 (Red)</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Ch. 1, Ch, 2</string>
+      </property>
+     </item>
+    </widget>
+   </widget>
+   <widget class="QLabel" name="logo">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>10</y>
+      <width>61</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>TextLabel</string>
+    </property>
+   </widget>
+   <widget class="QTabWidget" name="tabWidget">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>110</y>
+      <width>911</width>
+      <height>581</height>
+     </rect>
+    </property>
+    <property name="currentIndex">
+     <number>0</number>
+    </property>
+    <widget class="QWidget" name="tab_fcs">
+     <attribute name="title">
+      <string>FCS</string>
+     </attribute>
+     <widget class="QGroupBox" name="spot_search">
+      <property name="geometry">
+       <rect>
+        <x>510</x>
+        <y>300</y>
+        <width>241</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>Confocal spot search</string>
+      </property>
+      <widget class="QLabel" name="str_mesTime_2">
+       <property name="geometry">
+        <rect>
+         <x>610</x>
+         <y>30</y>
+         <width>121</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Measurement Time</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="m_time_2">
+       <property name="geometry">
+        <rect>
+         <x>610</x>
+         <y>50</y>
+         <width>101</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>2.5</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="str_gateTime_4">
+       <property name="geometry">
+        <rect>
+         <x>720</x>
+         <y>50</y>
+         <width>51</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>sec.</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="btn_loopStop">
+       <property name="geometry">
+        <rect>
+         <x>130</x>
+         <y>20</y>
+         <width>101</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Loop_Stop</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="btn_loopStart">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>101</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Loop_Start</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="countingdetails">
+      <property name="geometry">
+       <rect>
+        <x>510</x>
+        <y>400</y>
+        <width>391</width>
+        <height>131</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>Counting Details</string>
+      </property>
+      <widget class="QLabel" name="str_mesTime_3">
+       <property name="geometry">
+        <rect>
+         <x>610</x>
+         <y>30</y>
+         <width>121</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Measurement Time</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="m_time_3">
+       <property name="geometry">
+        <rect>
+         <x>610</x>
+         <y>50</y>
+         <width>101</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>2.5</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="str_gateTime_5">
+       <property name="geometry">
+        <rect>
+         <x>720</x>
+         <y>50</y>
+         <width>51</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>sec.</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="calc_total_photon">
+       <property name="geometry">
+        <rect>
+         <x>250</x>
+         <y>30</y>
+         <width>113</width>
+         <height>21</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="calc_cpm">
+       <property name="geometry">
+        <rect>
+         <x>250</x>
+         <y>80</y>
+         <width>113</width>
+         <height>21</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="logo_2">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>30</y>
+         <width>171</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Total number of Photons :</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="logo_3">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>80</y>
+         <width>171</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Count / molecules :</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="FCS_PC_widget" native="true">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>0</y>
+        <width>481</width>
+        <height>271</height>
+       </rect>
+      </property>
+      <widget class="QWidget" name="verticalLayoutWidget">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>481</width>
+         <height>271</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="FCS_PC_Layout"/>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="FCS_CF_widget" native="true">
+      <property name="geometry">
+       <rect>
+        <x>495</x>
+        <y>0</y>
+        <width>401</width>
+        <height>271</height>
+       </rect>
+      </property>
+      <widget class="QWidget" name="verticalLayoutWidget_3">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>401</width>
+         <height>271</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="FCS_CF_Layout">
+        <property name="spacing">
+         <number>-1</number>
+        </property>
+       </layout>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="FCS_PS_widget" native="true">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>273</y>
+        <width>481</width>
+        <height>271</height>
+       </rect>
+      </property>
+      <widget class="QWidget" name="verticalLayoutWidget_2">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>481</width>
+         <height>271</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="FCS_PS_Layout"/>
+      </widget>
+     </widget>
+     <zorder>countingdetails</zorder>
+     <zorder>spot_search</zorder>
+     <zorder>FCS_PC_widget</zorder>
+     <zorder>FCS_CF_widget</zorder>
+     <zorder>FCS_PS_widget</zorder>
+    </widget>
+    <widget class="QWidget" name="tab_fccs">
+     <attribute name="title">
+      <string>FCCS</string>
+     </attribute>
+     <widget class="QWidget" name="Ch1_PC_widget" native="true">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>0</y>
+        <width>481</width>
+        <height>271</height>
+       </rect>
+      </property>
+      <widget class="QWidget" name="verticalLayoutWidget_4">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>481</width>
+         <height>271</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="FCCS_Ch1_photonCount"/>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="Ch2_PC_widget" native="true">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>273</y>
+        <width>481</width>
+        <height>271</height>
+       </rect>
+      </property>
+      <widget class="QWidget" name="verticalLayoutWidget_5">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>481</width>
+         <height>271</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="FCCS_Ch2_photonCount"/>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="widget" native="true">
+      <property name="geometry">
+       <rect>
+        <x>495</x>
+        <y>0</y>
+        <width>401</width>
+        <height>271</height>
+       </rect>
+      </property>
+      <widget class="QWidget" name="verticalLayoutWidget_6">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>401</width>
+         <height>271</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="FCCS_Ch1_colFunc"/>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="widget_2" native="true">
+      <property name="geometry">
+       <rect>
+        <x>495</x>
+        <y>273</y>
+        <width>401</width>
+        <height>281</height>
+       </rect>
+      </property>
+      <widget class="QWidget" name="verticalLayoutWidget_7">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>401</width>
+         <height>271</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="FCCS_Ch2_colFunc"/>
+      </widget>
+     </widget>
+    </widget>
+   </widget>
+   <widget class="QPushButton" name="saveFigBtn">
+    <property name="geometry">
+     <rect>
+      <x>550</x>
+      <y>695</y>
+      <width>111</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Save as EPS</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="measureBtn">
+    <property name="geometry">
+     <rect>
+      <x>304</x>
+      <y>695</y>
+      <width>111</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Measure</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="saveDataBtn">
+    <property name="geometry">
+     <rect>
+      <x>430</x>
+      <y>695</y>
+      <width>111</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Save as CSV</string>
+    </property>
+   </widget>
+   <zorder>tabWidget</zorder>
+   <zorder>mSettingBox</zorder>
+   <zorder>logo</zorder>
+   <zorder>saveFigBtn</zorder>
+   <zorder>measureBtn</zorder>
+   <zorder>saveDataBtn</zorder>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="action_Quit">
+   <property name="text">
+    <string>&amp;Quit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
