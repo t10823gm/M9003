@@ -5,7 +5,7 @@ Created on Thu Jan 11 11:47:48 2018
 @author: Gembu Maryu
 """
 
-from ctypes import *
+from ctypes import windll, wintypes, c_bool, c_int16, c_void_p, POINTER, byref
 import numpy as np
 import struct
 
