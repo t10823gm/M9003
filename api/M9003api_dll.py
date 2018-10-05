@@ -25,7 +25,7 @@ dll.M9003Reset(hM9003)
 ''' set parameters
         args value is referenced by M9003api.h'''
 # g_time value should be assigned via GUI
-g_time = 40
+g_time = 4
 dll.M9003Setup.restype = c_bool
 dll.M9003Setup.argtypes = [wintypes.HANDLE, wintypes.BYTE, wintypes.BYTE,
                            wintypes.BYTE, wintypes.BYTE, wintypes.BYTE, wintypes.BYTE]
@@ -48,30 +48,27 @@ Params:
 #define M9003_INT_TRIGGER       0x00
 #define M9003_DELIMITER_NONE    0x00
 #define M9003_DELIMITER_INSERT  0x01
-
 #define M9003_GATE_ALL          0
 '''
-b_setting = dll.M9003Setup(hM9003, 0x08, 0x01, 0x00, g_time, 0, 0x00)
+b_setting = dll.M9003Setup(hM9003, 0x08, 0x03, 0x00, g_time, 0, 0x00)
 print('Setting: ', b_setting)
 
 ''' read Data
         photon countint data is obtained with this function. '''
 dll.M9003ReadData.restype = c_bool
-#dll.M9003ReadData.argtypes = [wintypes.HANDLE, c_void_p, POINTER(wintypes.DWORD)]
+dll.M9003ReadData.argtypes = [wintypes.HANDLE, c_void_p, POINTER(wintypes.DWORD)]
 
-#dataBuffer = (c_int*1670)()
-dataBuffer = (wintypes.DWORD*6680)()
+# FCCS
+dataBuffer = (wintypes.DWORD*2*3340)()
 
-"""
-class dBuf(Structure):
-    __fields__ = [('dataBuffer', pointer(wintypes.DWORD))]
-    """
+# FCS
+#dataBuffer = (wintypes.BYTE*6680)()
 
-# dataLnegth value should be assigned via GUI
-dataLength = byref(wintypes.DWORD(1670))
-#dataLength = byref(c_int(1670))
-rd = dll.M9003ReadData(hM9003, dataBuffer, dataLength)
-#rd = dll.M9003ReadData(hM9003, dataBuffer, dataLength)
+
+"""dataLnegth value should be assigned via GUI
+    dataLength value must be smaller than dataBuffer size"""
+dataLength = 6000
+rd = dll.M9003ReadData(hM9003, dataBuffer, byref(wintypes.DWORD(dataLength)))
 print('ReadData: ', rd)
 
 ''' Count Stop
@@ -84,7 +81,7 @@ print('CountStop', cs)
         info value indicate a leakage of data'''
 info = c_int16()
 dll.M9003GetInfo.restype = c_bool
-# dll.M9003GetInfo.argtypes =(, c_int16)
+dll.M9003GetInfo.argtypes =(wintypes.HANDLE, POINTER(c_int16))
 getinfo = dll.M9003GetInfo(hM9003, byref(info))
 print("GetInfo: ", getinfo)
 print("info value: ", info.value)
@@ -92,18 +89,54 @@ print("info value: ", info.value)
 ''' close handle '''
 dll.M9003Close.restype = c_bool
 cl = dll.M9003Close(hM9003)
-print(cl)
+print("CloseHandle: ", cl)
 
 ''' endian '''
 import sys
-print(sys.byteorder)
+print("Endian of this PC: ", sys.byteorder)
 
 ''' convert data type of dataBuffer '''
-convData = cast(dataBuffer, POINTER(wintypes.DWORD))
-#convData = cast(dataBuffer, POINTER(c_int))
-y = []
-for i in range(1670):
-    x = struct.pack('L', convData[i])
-    y.append(struct.unpack('<BBBB', x))
-countData = [convData[i] for i in range(1670)]
+#convData = cast(dataBuffer, POINTER(wintypes.DWORD))
+#convData = cast(dataBuffer, POINTER(POINTER(wintypes.DWORD)))
 
+def conv2darray(db, dlen):
+    casted = cast(db, POINTER(wintypes.DWORD))
+    for i in range(dlen):
+        tmp = casted[i]
+        x = struct.pack('<L', tmp)
+        y = (struct.unpack('<BBBB', x))
+        chl1.append(y[0])
+        chl1.append(y[2])
+        chl2.append(y[1])
+        chl2.append(y[3])
+
+def convDWORD2int(data):
+    x = struct.pack('<L', data)
+    y = (struct.unpack('<BBBB', x))
+    return y
+#hoge = [[convDWORD2int(convData[o][i]) for i in range(2)]
+#            for o in range(1670)]
+cha = 1
+def convDWORD2int2(data, ch):
+    x = struct.pack('L', data)
+    if cha == 1:
+        y = (struct.unpack('<xBxB', x))
+    elif cha ==2:
+        y = (struct.unpack('<BxBx', x))
+        
+    return y
+
+
+def cast_2d_pointer_to_2d_list(ctype_2d_pointer_value, outer_rank, inner_rank):
+    '''Cast ctypes's 2d-pointer or 2d-array to Python 2d-List
+    Args:
+        ctype_2d_pointer_value (POINTER(POINTER(c_types object))): 2d-pointer of c_types objects
+        outer_rank (int): outer dimention of list
+        inner_rank (int): inner dimention of list
+    Returns:
+        List(python object like c_types): Python cast list
+    '''
+    return [[ctype_2d_pointer_value[o][i] for i in range(inner_rank)]
+            for o in range(outer_rank)]
+
+dworddata = cast_2d_pointer_to_2d_list(dataBuffer,3340,2)
