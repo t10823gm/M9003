@@ -18,6 +18,8 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
 from ui import qt_ui
+from FCS import calCorr
+
 import ctypes
 
 
@@ -128,14 +130,6 @@ class MainWindow(QMainWindow, qt_ui.Ui_MainWindow):
     pg.setConfigOption('background', None)
     pg.setConfigOption('foreground', 'k')
 
-    def init_FCS_PC_Figure(self):
-        self.FCS_PC_fig = pg.PlotWidget()
-        self.ui.FCS_PC_Layout.addWidget(self.FCS_PC_fig)
-        self.FCS_PC_fig.setLabel('left', "Photon Count", units='photon')
-        self.FCS_PC_fig.setLabel('bottom', "Time", )
-        self.FCS_PC_fig.setLabel('top', "Temporal Photon Count")
-
-
     def init_FCS_SUM_Figure(self):
         self.FCS_PS_fig = pg.PlotWidget()
         self.ui.FCS_PS_Layout.addWidget(self.FCS_PS_fig)
@@ -143,14 +137,18 @@ class MainWindow(QMainWindow, qt_ui.Ui_MainWindow):
         self.FCS_PS_fig.setLabel('bottom', "Time", )
         self.FCS_PS_fig.setLabel('top', "Total Photon Count")
 
+    def init_FCS_PC_Figure(self):
+        self.FCS_PC_fig = pg.PlotWidget()
+        self.ui.FCS_PC_Layout.addWidget(self.FCS_PC_fig)
+        self.FCS_PC_fig.setLabel('left', "Photon Count", units='photon')
+        self.FCS_PC_fig.setLabel('bottom', "Time", )
+        self.FCS_PC_fig.setLabel('top', "Temporal Photon Count")
 
     def init_FCS_CORR_Figure(self):
         self.FCS_CORR_fig = pg.PlotWidget()
         self.ui.FCS_CF_Layout.addWidget(self.FCS_CORR_fig)
         self.FCS_CORR_fig.setLabel('bottom', "Time [frame]", )
         self.FCS_CORR_fig.setLabel('top', "Correlation function")
-
-
 
     def init_FCCS_ch1_PC_Figure(self):
         self.fig = pg.PlotWidget()
@@ -179,7 +177,6 @@ class MainWindow(QMainWindow, qt_ui.Ui_MainWindow):
         self.ui.FCCS_Ch2_colFunc.addWidget(self.FCCS_CH2_CORR_fig)
         self.FCCS_CH2_CORR_fig.setLabel('bottom', "Time [frame]", )
         self.FCCS_CH2_CORR_fig.setLabel('top', "Correlation function")
-
 
     def measurePhoton(self, photon_hist):
         """run M9003api_ReadData
