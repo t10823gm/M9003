@@ -19,6 +19,7 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
 from ui import qt_ui
 from FCS import calCorr
+from api import M9003api_dll
 
 import ctypes
 
@@ -83,6 +84,7 @@ class MainWindow(QMainWindow, qt_ui.Ui_MainWindow):
         # single measurement
         self.ui.measureBtn.clicked.connect(lambda: self.measurebtnClicked(photon_hist))
         self.ui.measureBtn.clicked.connect(lambda: self.calcCorrFunc(self.photon))
+        self.ui.measureBtn.clicked.connect(lambda: self.run_APD())
 
         # loop measurement
         self.ui.btn_loopStart.clicked.connect(lambda: self.loop_measurment(photon_hist))
@@ -264,6 +266,10 @@ class MainWindow(QMainWindow, qt_ui.Ui_MainWindow):
         print(name)
         ex = pg.exporters.SVGExporter(self.FCS_CORR_fig.plotItem)
         ex.export('test.svg')
+
+    def run_APD(self):
+        self.traces = M9003api_dll.gen_testdata()
+        print(self.traces)
 
 class errorPopup(QWidget):
     def __init__(self) -> object:
