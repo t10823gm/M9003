@@ -133,6 +133,10 @@ def check_endian():
 
 
 def gen_testdata():
-    traces = np.random.randint(0, 10, 10000)
+    trace1 = np.random.randint(0, 10, 10000)
+    trace2 = np.random.randint(0, 10, 10000)
     print('test')
+    traces = []
+    traces.append(trace1)
+    traces.append(trace2)
     return traces
